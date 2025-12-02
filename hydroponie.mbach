@@ -1,0 +1,160 @@
+eset LevelsNutriments = {l1,l2,l3,l4}.
+     LevelWarterJar  = {water_empty, water_low, water_medium, water_full}.
+     Luminosity       = {low_light, medium_light, high_light}.
+     Temperature      = {cold, normal, hot}.
+     HealthPlant       = {healthy,low_water,low_nutr,cold_stressed,hot_stressed}.
+     NutrimeChief     = {active, inactive}.
+     Colors           = {red,green,blue}.
+     ScreenState      = {scr_ok, scr_low_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
+     FanState         ={fan_off,fan_on}.
+
+
+
+eqn 
+    afterLevel(l1) = l2.  beforeLevel(l1) = l1.
+    afterLevel(l2) = l3.  beforeLevel(l2) = l1.
+    afterLevel(l3) = l4.  beforeLevel(l3) = l2.
+
+                        
+ 
+
+scene hydro = {
+
+    size = (1200,1200).
+    layers = { top }.
+
+    background_img  = loadImage(Images/hydro_background.png).
+        jar_empty_img   = loadImage(Images/jar_empty.png).
+        jar_low_img     = loadImage(Images/jar_low.png).
+        jar_medium_img  = loadImage(Images/jar_medium.png).
+        jar_full_img    = loadImage(Images/jar_full.png).
+
+        plant_healthy_img     = loadImage(Images/plant_healthy.png).
+        plant_low_water_img   = loadImage(Images/plant_low_water.png).
+        plant_hot_stress_img  = loadImage(Images/plant_hot_stress.png).
+        plant_cold_stress_img = loadImage(Images/plant_cold_stress.png).
+        plant_low_nutr_img    = loadImage(Images/plant_low_nutr.png).
+
+        ind_low_nutr_img_level1    = loadImage(Images/ind_low_nutr1.png).
+        ind_low_nutr_img_level2    = loadImage(Images/ind_low_nutr2.png).
+        ind_low_nutr_img_level3    = loadImage(Images/ind_low_nutr3.png).
+        ind_low_nutr_img_level4    = loadImage(Images/ind_low_nutr4.png).
+        
+
+        led_blue_img  = loadImage(Images/led_blue.png).
+        led_green_img = loadImage(Images/led_green.png).
+        led_red_img   = loadImage(Images/led_red.png).
+
+        phone_ok_img        = loadImage(Images/phone_ok.png).
+        phone_low_water_img = loadImage(Images/phone_low_water.png).
+        phone_low_nutr_img  = loadImage(Images/phone_low_nutr.png).
+        phone_hot_img       = loadImage(Images/phone_hot.png).
+        phone_cold_img      = loadImage(Images/phone_cold.png).
+        phone_vent_on_img   = loadImage(Images/phone_vent_on.png).
+
+        fan_off_img = loadImage(Images/fan_off.png).
+        fan_on_img  = loadImage(Images/fan_on.png).
+
+        pump_img    = loadImage(Images/pump.png).
+
+    widget background = {
+            display = { background_img}
+            init    = { wdL = back. }
+        }
+
+    widget jar = {
+        attributes = { water_level in LevelWarterJar.}
+        display    = { 
+
+            waterLevel = water_empty -> jar_empty_img.
+            waterLevel = water_low -> jar_low_img.
+            waterLevel = water_medium -> jar_medium_img.
+            waterLevel = water_full ->  jar_full_img.
+        }
+        init = {
+            wdL = back.
+            waterLevel = water_full.
+        }
+    }
+
+    widget plant = {
+            attributes = { healt_state in HealthPlant. }
+            display = {
+                healt_state = healthy -> plant_healthy_img.
+                healt_state = low_water -> plant_low_water_img.
+                healt_state = low_nutr -> plant_low_nutr_img.
+                healt_state = hot_stressed -> plant_hot_stress_img.
+                healt_state = cold_stress -> plant_cold_stress_img.
+            }
+            init = {
+                wdL    = top.
+                healt_state = healthy.
+            }
+        }
+
+
+    widget indicateur_nutriment = { 
+            attributes = { level in LevelsNutriments. }
+            display = {
+                level = l1 -> ind_low_nutr_img_level1.
+                level = l2 -> ind_low_nutr_img_level2.
+                level = l3 -> ind_low_nutr_img_level3.
+                level = l4 -> ind_low_nutr_img_level4.
+
+            }
+            init = {
+                wdL    = top.
+                level = l4.
+            }
+    }
+
+    widget led = {
+            attributes = { color in Colors. }
+            display = {
+                color = blue -> led_blue_img.
+                color = green -> led_green_img.
+                color = red -> led_red_img.
+            }
+            init = {
+                wdL    = top.
+                color = led_green.
+            }
+        }
+
+
+    widget phone = {
+            attributes = { sstate in ScreenState. }
+            display = {
+                sstate = scr_ok          -> phone_ok_img.
+                sstate = scr_low_water   -> phone_low_water_img.
+                sstate = scr_low_nutr    -> phone_low_nutr_img.
+                sstate = scr_hot         -> phone_hot_img.
+                sstate = scr_cold        -> phone_cold_img.
+                sstate = scr_vent_on     -> phone_vent_on_img.
+            }
+            init = {
+                wdL    = top.
+                sstate = scr_ok.
+            }
+        }
+
+
+
+    widget fan = {
+            attributes = { fstate in FanState. }
+            display = {
+                fstate = fan_off -> fan_off_img.
+                fstate = fan_on -> fan_on_img.
+            }
+            init = {
+                wdL    = top.
+                fstate = fan_off.
+            }
+        }
+
+    widget pump = {
+            display = { pump_img }
+            init    = { wdL = top. }
+        }
+
+}.
