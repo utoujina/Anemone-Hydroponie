@@ -11,12 +11,12 @@ eset LevelsNutriments = {l1,l2,l3,l4}.
 
 eqn
     xPos(jar_pos)      = 620.   yPos(jar_pos)      = 557.
-    xPos(plant_pos)    = 250.   yPos(plant_pos)    = 320.
-    xPos(phone_pos)    = 980.   yPos(phone_pos)    = 420.
-    xPos(fan_pos)      = 1080.  yPos(fan_pos)      = 560.
-    xPos(pump_pos)     = 760.   yPos(pump_pos)     = 610.
-    xPos(led_pos)      = 540.   yPos(led_pos)      = 120.
-    xPos(nutr_ind_pos) = 390.   yPos(nutr_ind_pos) = 170.
+    xPos(plant_pos)    = 820.   yPos(plant_pos)    = 420.
+    xPos(phone_pos)    = 20.   yPos(phone_pos)    = 520.
+    xPos(fan_pos)      = 1000.  yPos(fan_pos)      = 220.
+    xPos(pump_pos)     = 770.   yPos(pump_pos)     = 332.
+    xPos(led_pos)      = 440.   yPos(led_pos)      = 220.
+    xPos(nutr_ind_pos) = 600.   yPos(nutr_ind_pos) = 557.
 
     afterLevel(l1) = l2.  beforeLevel(l1) = l1.
     afterLevel(l2) = l3.  beforeLevel(l2) = l1.
