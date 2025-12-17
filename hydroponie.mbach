@@ -7,28 +7,168 @@ eset LevelsNutriments = {l1,l2,l3,l4}.
      Colors           = {red,green,blue}.
      ScreenState      = {scr_ok, scr_low_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
      FanState         ={fan_off,fan_on}.
+     UIPos = { jar_pos, plant_pos, phone_pos, fan_pos, pump_pos, led_pos, nutr_ind_pos }.
 
+eqn
+    xPos(jar_pos)      = 620.   yPos(jar_pos)      = 557.
+    xPos(plant_pos)    = 250.   yPos(plant_pos)    = 320.
+    xPos(phone_pos)    = 980.   yPos(phone_pos)    = 420.
+    xPos(fan_pos)      = 1080.  yPos(fan_pos)      = 560.
+    xPos(pump_pos)     = 760.   yPos(pump_pos)     = 610.
+    xPos(led_pos)      = 540.   yPos(led_pos)      = 120.
+    xPos(nutr_ind_pos) = 390.   yPos(nutr_ind_pos) = 170.
 
-
-eqn 
     afterLevel(l1) = l2.  beforeLevel(l1) = l1.
     afterLevel(l2) = l3.  beforeLevel(l2) = l1.
     afterLevel(l3) = l4.  beforeLevel(l3) = l2.
 
                         
- 
 
-scene hydro = {
+scene ppScene = {
 
     size = (1251,757).
     layers = { top }.
 
-    background_img  = loadImage(Images/hydro_background.png).
-       
+    background = loadImage(Images/hydrobackground.png).
+    jar_empty_img   = loadImage(Images/jar_empty.png).
+    jar_low_img   = loadImage(Images/jar_low.png).
+    jar_medium_img   = loadImage(Images/jar_medium.png).
+    jar_full_img   = loadImage(Images/jar_full.png).
+        
+    plant_healthy_img     = loadImage(Images/plant_healthy.jpg).
+    plant_low_water_img   = loadImage(Images/plant_low_water.png).
+    plant_hot_stress_img  = loadImage(Images/plant_hot_stress.jpg).
+    plant_cold_stress_img = loadImage(Images/plant_cold_stress.jpg).
+    plant_low_nutr_img    = loadImage(Images/plant_low_nutr.jpg).
+
+    ind_low_nutr1_img    = loadImage(Images/ind_low_nutr1.png).
+    ind_low_nutr2_img    = loadImage(Images/ind_low_nutr2.png).
+    ind_low_nutr3_img    = loadImage(Images/ind_low_nutr3.png).
+    ind_low_nutr4_img    = loadImage(Images/ind_low_nutr4.png).
+    
+
+    led_blue_img  = loadImage(Images/led_blue.png).
+    led_green_img = loadImage(Images/led_green.png).
+    led_red_img   = loadImage(Images/led_red.png).
+
+    phone_ok_img        = loadImage(Images/phone_ok.png).
+    phone_low_water_img = loadImage(Images/phone_low_water.png).
+    phone_low_nutr_img  = loadImage(Images/phone_low_nutr.png).
+    phone_hot_img       = loadImage(Images/phone_hot.png).
+    phone_cold_img      = loadImage(Images/phone_cold.png).
+    phone_vent_on_img   = loadImage(Images/phone_vent_on.png).
+
+    fan_off_img = loadImage(Images/fan_off.png).
+    fan_on_img  = loadImage(Images/fan_on.png).
+
+    pump_img    = loadImage(Images/pum_on.png).
+
+
+    widget jar_empty = { display = { jar_empty_img }  init = { wdL = top. } }
+    widget jar_low   = { display = { jar_low_img }    init = { wdL = top. } }
+    widget jar_medium= { display = { jar_medium_img } init = { wdL = top. } }
+    widget jar_full  = { display = { jar_full_img }   init = { wdL = top. } }
+
+    widget plant_healthy     = { display = { plant_healthy_img }     init = { wdL = top. } }
+    widget plant_low_water   = { display = { plant_low_water_img }   init = { wdL = top. } }
+    widget plant_low_nutr    = { display = { plant_low_nutr_img }    init = { wdL = top. } }
+    widget plant_hot_stress  = { display = { plant_hot_stress_img }  init = { wdL = top. } }
+    widget plant_cold_stress = { display = { plant_cold_stress_img } init = { wdL = top. } }
+
+    widget ind_low_nutr1 = { display = { ind_low_nutr1_img } init = { wdL = top. } }
+    widget ind_low_nutr2 = { display = { ind_low_nutr2_img } init = { wdL = top. } }
+    widget ind_low_nutr3 = { display = { ind_low_nutr3_img } init = { wdL = top. } }
+    widget ind_low_nutr4 = { display = { ind_low_nutr4_img } init = { wdL = top. } }
+
+    widget led_blue  = { display = { led_blue_img }  init = { wdL = top. } }
+    widget led_green = { display = { led_green_img } init = { wdL = top. } }
+    widget led_red   = { display = { led_red_img }   init = { wdL = top. } }
+
+    widget phone_ok        = { display = { phone_ok_img }        init = { wdL = top. } }
+    widget phone_low_water = { display = { phone_low_water_img } init = { wdL = top. } }
+    widget phone_low_nutr  = { display = { phone_low_nutr_img }  init = { wdL = top. } }
+    widget phone_hot       = { display = { phone_hot_img }       init = { wdL = top. } }
+    widget phone_cold      = { display = { phone_cold_img }      init = { wdL = top. } }
+    widget phone_vent_on   = { display = { phone_vent_on_img }   init = { wdL = top. } }
+
+    widget fan_off = { display = { fan_off_img } init = { wdL = top. } }
+    widget fan_on  = { display = { fan_on_img }  init = { wdL = top. } }
+
+
+    widget pump = { display = { pump_img } init = { wdL = top. } }
 
 }.
+    
+
+
 
 proc Init =
-         draw_scene(hydro).
+    draw_scene(ppScene);
 
-         
+    place_at(jar_empty,  ppScene, xPos(jar_pos), yPos(jar_pos));
+    place_at(jar_low,    ppScene, xPos(jar_pos), yPos(jar_pos));
+    place_at(jar_medium, ppScene, xPos(jar_pos), yPos(jar_pos));
+    place_at(jar_full,   ppScene, xPos(jar_pos), yPos(jar_pos));
+
+    place_at(plant_healthy,        ppScene, xPos(plant_pos), yPos(plant_pos));
+    place_at(plant_low_water,      ppScene, xPos(plant_pos), yPos(plant_pos));
+    place_at(plant_low_nutr,       ppScene, xPos(plant_pos), yPos(plant_pos));
+    place_at(plant_hot_stress,     ppScene, xPos(plant_pos), yPos(plant_pos));
+    place_at(plant_cold_stress,    ppScene, xPos(plant_pos), yPos(plant_pos));
+
+    place_at(phone_ok,        ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone_low_water, ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone_low_nutr,  ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone_hot,       ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone_cold,      ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone_vent_on,   ppScene, xPos(phone_pos), yPos(phone_pos));
+
+    place_at(fan_off, ppScene, xPos(fan_pos), yPos(fan_pos));
+    place_at(fan_on,  ppScene, xPos(fan_pos), yPos(fan_pos));
+
+    place_at(pump,      ppScene, xPos(pump_pos), yPos(pump_pos));
+
+    place_at(led_red,   ppScene, xPos(led_pos),  yPos(led_pos));
+    place_at(led_green, ppScene, xPos(led_pos),  yPos(led_pos));
+    place_at(led_blue,  ppScene, xPos(led_pos),  yPos(led_pos));
+
+    place_at(ind_low_nutr1, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
+    place_at(ind_low_nutr2, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
+    place_at(ind_low_nutr3, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
+    place_at(ind_low_nutr4, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
+
+    show(plant_healthy,     ppScene);
+    show(plant_low_water,   ppScene);
+    show(plant_low_nutr,    ppScene);
+    show(plant_hot_stress,  ppScene);
+    show(plant_cold_stress, ppScene);
+
+    show(jar_empty,  ppScene);
+    show(jar_low,    ppScene);
+    show(jar_medium, ppScene);
+    show(jar_full,   ppScene);
+
+    show(ind_low_nutr1, ppScene);
+    show(ind_low_nutr2, ppScene);
+    show(ind_low_nutr3, ppScene);
+    show(ind_low_nutr4, ppScene); 
+
+    show(led_red,   ppScene);
+    show(led_green, ppScene);
+    show(led_blue,  ppScene);
+
+    show(phone_ok,        ppScene);
+    show(phone_low_water, ppScene);
+    show(phone_low_nutr,  ppScene);
+    show(phone_hot,       ppScene);
+    show(phone_cold,      ppScene);
+    show(phone_vent_on,   ppScene);
+
+    show(fan_off, ppScene);
+    show(fan_on,  ppScene);
+
+    show(pump, ppScene).
+
+           
+
+
