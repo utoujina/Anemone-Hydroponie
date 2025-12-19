@@ -2,7 +2,7 @@ eset LevelsNutriments = {l1,l2,l3,l4}.
      LevelWarterJar  = {water_empty, water_low, water_medium, water_full}.
      Luminosity       = {low_light, medium_light, high_light}.
      Temperature      = {cold, normal, hot}.
-     HealthPlant       = {healthy,low_water,low_nutr,cold_stressed,hot_stressed}.
+     HealthPlant       = {healthy,  ,low_nutr,cold_stressed,hot_stressed}.
      NutrimeChief     = {active, inactive}.
      Colors           = {red,green,blue}.
      ScreenState      = {scr_ok, scr_low_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
@@ -63,37 +63,65 @@ scene ppScene = {
 
     pump_img    = loadImage(Images/pum_on.png).
 
+    widget jar = {attributes = {level in LevelWarterJar.} display = {
+        level = water_empty -> jar_empty_img.
+        level = water_low -> jar_low_img.
+        level = water_medium -> jar_medium_img.
+        level = water_full -> jar_full_img.
+    } init = { 
+        wdL = top.
+        level = water_full.
+    }}
 
-    widget jar_empty = { display = { jar_empty_img }  init = { wdL = top. } }
-    widget jar_low   = { display = { jar_low_img }    init = { wdL = top. } }
-    widget jar_medium= { display = { jar_medium_img } init = { wdL = top. } }
-    widget jar_full  = { display = { jar_full_img }   init = { wdL = top. } }
+    widget plant = {attributes = {health in HealthPlant.} display = {
+        health = healthy -> plant_healthy_img.
+        health = low_water -> plant_low_water_img.
+        health = low_nutr -> plant_low_nutr_img.
+        health = cold_stressed -> plant_hot_stress_img.
+        health = hot_stressed -> plant_cold_stress_img.
+    } init = { 
+        wdL = top.
+        health = healthy.
+    }}
 
-    widget plant_healthy     = { display = { plant_healthy_img }     init = { wdL = top. } }
-    widget plant_low_water   = { display = { plant_low_water_img }   init = { wdL = top. } }
-    widget plant_low_nutr    = { display = { plant_low_nutr_img }    init = { wdL = top. } }
-    widget plant_hot_stress  = { display = { plant_hot_stress_img }  init = { wdL = top. } }
-    widget plant_cold_stress = { display = { plant_cold_stress_img } init = { wdL = top. } }
+    widget ind_low_nutr = {attributes = {ind in LevelsNutriments.} display = {
+        ind = l1 -> ind_low_nutr1_img.
+        ind = l2 -> ind_low_nutr2_img.
+        ind = l3 -> ind_low_nutr3_img.
+        ind = l4 -> ind_low_nutr4_img.
+    } init = { 
+        wdL = top.
+        ind = l1.
+    }}
 
-    widget ind_low_nutr1 = { display = { ind_low_nutr1_img } init = { wdL = top. } }
-    widget ind_low_nutr2 = { display = { ind_low_nutr2_img } init = { wdL = top. } }
-    widget ind_low_nutr3 = { display = { ind_low_nutr3_img } init = { wdL = top. } }
-    widget ind_low_nutr4 = { display = { ind_low_nutr4_img } init = { wdL = top. } }
+    widget led =  {attributes = {light in Colors.} display = {
+        light = blue -> led_blue_img.
+        light = green -> led_green_img.
+        light = red -> led_red_img.
+    } init = { 
+        wdL = top.
+        light = green.
+    }}
 
-    widget led_blue  = { display = { led_blue_img }  init = { wdL = top. } }
-    widget led_green = { display = { led_green_img } init = { wdL = top. } }
-    widget led_red   = { display = { led_red_img }   init = { wdL = top. } }
+    widget phone = {attributes = {screen in ScreenState.} display = {
+        screen = scr_ok -> phone_ok_img.
+        screen = scr_low_water -> phone_low_water_img.
+        screen = scr_low_nutr -> phone_low_nutr_img.
+        screen = scr_hot -> phone_hot_img.
+        screen = scr_cold -> phone_cold_img.
+        screen = scr_vent_on -> phone_vent_on_img.
+    } init = { 
+        wdL = top.
+        screen = scr_ok.
+    }}
 
-    widget phone_ok        = { display = { phone_ok_img }        init = { wdL = top. } }
-    widget phone_low_water = { display = { phone_low_water_img } init = { wdL = top. } }
-    widget phone_low_nutr  = { display = { phone_low_nutr_img }  init = { wdL = top. } }
-    widget phone_hot       = { display = { phone_hot_img }       init = { wdL = top. } }
-    widget phone_cold      = { display = { phone_cold_img }      init = { wdL = top. } }
-    widget phone_vent_on   = { display = { phone_vent_on_img }   init = { wdL = top. } }
-
-    widget fan_off = { display = { fan_off_img } init = { wdL = top. } }
-    widget fan_on  = { display = { fan_on_img }  init = { wdL = top. } }
-
+    widget fan = {attributes = {state in FanState.} display = {
+        state = fan_off -> fan_off_img.
+        state = fan_on -> fan_on_img.
+    } init = { 
+        wdL = top.
+        state = fan_off.
+    }}
 
     widget pump = { display = { pump_img } init = { wdL = top. } }
 
@@ -105,70 +133,48 @@ scene ppScene = {
 proc Init =
     draw_scene(ppScene);
 
-    place_at(jar_empty,  ppScene, xPos(jar_pos), yPos(jar_pos));
-    place_at(jar_low,    ppScene, xPos(jar_pos), yPos(jar_pos));
-    place_at(jar_medium, ppScene, xPos(jar_pos), yPos(jar_pos));
-    place_at(jar_full,   ppScene, xPos(jar_pos), yPos(jar_pos));
+    place_at(jar,  ppScene, xPos(jar_pos), yPos(jar_pos));
 
-    place_at(plant_healthy,        ppScene, xPos(plant_pos), yPos(plant_pos));
-    place_at(plant_low_water,      ppScene, xPos(plant_pos), yPos(plant_pos));
-    place_at(plant_low_nutr,       ppScene, xPos(plant_pos), yPos(plant_pos));
-    place_at(plant_hot_stress,     ppScene, xPos(plant_pos), yPos(plant_pos));
-    place_at(plant_cold_stress,    ppScene, xPos(plant_pos), yPos(plant_pos));
+    place_at(plant,        ppScene, xPos(plant_pos), yPos(plant_pos));
 
-    place_at(phone_ok,        ppScene, xPos(phone_pos), yPos(phone_pos));
-    place_at(phone_low_water, ppScene, xPos(phone_pos), yPos(phone_pos));
-    place_at(phone_low_nutr,  ppScene, xPos(phone_pos), yPos(phone_pos));
-    place_at(phone_hot,       ppScene, xPos(phone_pos), yPos(phone_pos));
-    place_at(phone_cold,      ppScene, xPos(phone_pos), yPos(phone_pos));
-    place_at(phone_vent_on,   ppScene, xPos(phone_pos), yPos(phone_pos));
+    place_at(phone,        ppScene, xPos(phone_pos), yPos(phone_pos));
 
-    place_at(fan_off, ppScene, xPos(fan_pos), yPos(fan_pos));
-    place_at(fan_on,  ppScene, xPos(fan_pos), yPos(fan_pos));
+    place_at(fan, ppScene, xPos(fan_pos), yPos(fan_pos));
 
     place_at(pump,      ppScene, xPos(pump_pos), yPos(pump_pos));
 
-    place_at(led_red,   ppScene, xPos(led_pos),  yPos(led_pos));
-    place_at(led_green, ppScene, xPos(led_pos),  yPos(led_pos));
-    place_at(led_blue,  ppScene, xPos(led_pos),  yPos(led_pos));
+    place_at(led,   ppScene, xPos(led_pos),  yPos(led_pos));
 
-    place_at(ind_low_nutr1, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
-    place_at(ind_low_nutr2, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
-    place_at(ind_low_nutr3, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
-    place_at(ind_low_nutr4, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
+    place_at(ind_low_nutr, ppScene, xPos(nutr_ind_pos), yPos(nutr_ind_pos));
 
-    show(plant_healthy,     ppScene);
-    show(plant_low_water,   ppScene);
-    show(plant_low_nutr,    ppScene);
-    show(plant_hot_stress,  ppScene);
-    show(plant_cold_stress, ppScene);
+    show(plant,     ppScene);
 
-    show(jar_empty,  ppScene);
-    show(jar_low,    ppScene);
-    show(jar_medium, ppScene);
-    show(jar_full,   ppScene);
+    show(jar,  ppScene);
 
-    show(ind_low_nutr1, ppScene);
-    show(ind_low_nutr2, ppScene);
-    show(ind_low_nutr3, ppScene);
-    show(ind_low_nutr4, ppScene); 
+    show(ind_low_nutr, ppScene);
 
-    show(led_red,   ppScene);
-    show(led_green, ppScene);
-    show(led_blue,  ppScene);
+    show(led,   ppScene);
 
-    show(phone_ok,        ppScene);
-    show(phone_low_water, ppScene);
-    show(phone_low_nutr,  ppScene);
-    show(phone_hot,       ppScene);
-    show(phone_cold,      ppScene);
-    show(phone_vent_on,   ppScene);
+    show(phone,        ppScene);
 
-    show(fan_off, ppScene);
-    show(fan_on,  ppScene);
+    show(fan, ppScene);
 
     show(pump, ppScene).
 
-           
+proc SetPlantHealth(new_health : HealthPlant) = 
+    att(health, plant, ppScene, new_health).
 
+proc SetJarLevel(new_level : LevelWarterJar) = 
+    att(level, jar, ppScene, new_level).
 
+proc SetIndNut(new_ind : LevelsNutriments) = 
+    att(ind, ind_low_nutr, ppScene, new_ind).
+
+proc SetLedLight(new_light : Colors) = 
+    att(light, led, ppScene, new_light).
+
+proc SetPhoneScreen(new_screen : ScreenState) = 
+    att(screen, phone, ppScene, new_screen).
+
+proc SetFanState(new_state : FanState) = 
+    att(state, fan, ppScene, new_state).
