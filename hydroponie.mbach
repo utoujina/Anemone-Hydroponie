@@ -210,7 +210,9 @@ proc Init =
         att(ind, ind_low_nutr, ppScene, new_ind);
         tell(new_ind);
         (new_ind = l4 -> SetPlantHealthAdd(low_nutr);SetPhoneScreenAdd(scr_low_nutr)) +
-        (nask(l4);SetPhoneScreenNext; SetPlantHealthNext)).
+        (new_ind = l3 -> SetPhoneScreenNext; SetPlantHealthNext) +
+        (new_ind = l2 -> SetPhoneScreenNext; SetPlantHealthNext) +
+        (new_ind = l1 -> SetPhoneScreenNext; SetPlantHealthNext)).
 
     SetLedLight(new_light : Colors) = 
         (ask(new_light)) +
@@ -248,8 +250,8 @@ proc Init =
         (get(fan_off) + get(fan_on));
         att(state, fan, ppScene, new_state);
         tell(new_state);
-        (new_state = fan_on -> SetPhoneScreenAdd(scr_vent_on) +
-        (get(scr_vent_on);SetPhoneScreenNext))).
+        (new_state = fan_on -> SetPhoneScreenAdd(scr_vent_on)) +
+        (get(scr_vent_on);SetPhoneScreenNext)).
 
     SetTemperature(new_temp : Temperature) =
         (ask(new_temp)) +
@@ -258,7 +260,7 @@ proc Init =
         tell(new_temp);
         ((new_temp = cold -> SetPlantHealthAdd(cold_stressed); SetPhoneScreenAdd(scr_cold); SetLedLight(blue)) +
         (new_temp = hot -> SetPlantHealthAdd(hot_stressed); SetPhoneScreenAdd(scr_hot); SetLedLight(red)) +
-        (new_temp = normal -> SetLedLight(green)))).
+        (new_temp = normal -> SetLedLight(green); SetPhoneScreenNext; SetPlantHealthNext))).
 
 
     RandomModifications = 
