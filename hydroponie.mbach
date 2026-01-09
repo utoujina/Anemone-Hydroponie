@@ -168,13 +168,6 @@ proc Init =
 
     show(pump, ppScene).
 
-    SetPlantHealthReplace(new_health : HealthPlant) = 
-        (ask(new_health)) +
-        (nask(new_health);
-        (get(healthy)+get(low_water)+get(low_nutr)+
-        get(cold_stressed)+get(hot_stressed));
-        att(health, plant, ppScene, new_health);
-        tell(new_health)).
 
     SetPlantHealthAdd(new_health : HealthPlant) =
         (ask(new_health)) +
@@ -184,23 +177,22 @@ proc Init =
         tell(new_health)).
 
     SetPlantHealthNext =
-        (ask(low_water);att(health, plant, ppScene, low_water)) +
+        ((ask(low_water);att(health, plant, ppScene, low_water)) +
         (ask(low_nutr);att(health, plant, ppScene, low_nutr)) +
         (ask(cold_stressed);att(health, plant, ppScene, cold_stressed)) +
         (ask(hot_stressed);att(health, plant, ppScene, hot_stressed)) +
-        (nask(low_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);tell(healthy);att(health, plant, ppScene, healthy) ).
+        (nask(low_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);tell(healthy);att(health, plant, ppScene, healthy))).
 
     SetJarLevel(new_level : LevelWarterJar) =
         (ask(new_level)) +
         (nask(new_level);
-        (get(water_empty)+ get(water_low)+ get(water_medium)+get(water_full));
+        (get(water_empty) + get(water_low) + get(water_medium) + get(water_full));
         att(level, jar, ppScene, new_level);
         tell(new_level);
         ((new_level = water_low -> SetPlantHealthAdd(low_water); SetPhoneScreenAdd(scr_low_water)) +
         (new_level = water_empty -> SetPlantHealthAdd(low_water); SetPhoneScreenAdd(scr_low_water)) +
-        (new_level = water_medium -> (get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water));SetPhoneScreenNext; SetPlantHealthNext) +
-        (new_level = water_full -> (get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water));SetPhoneScreenNext; SetPlantHealthNext)
-        )).
+        (new_level = water_medium -> ((get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water)));SetPhoneScreenNext; SetPlantHealthNext) +
+        (new_level = water_full -> ((get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water)));SetPhoneScreenNext; SetPlantHealthNext))).
 
     SetIndNut(new_ind : LevelsNutriments) =
         (ask(new_ind)) +
@@ -209,10 +201,10 @@ proc Init =
         (get(l4); get(scr_low_nutr); get(low_nutr) ));
         att(ind, ind_low_nutr, ppScene, new_ind);
         tell(new_ind);
-        (new_ind = l4 -> SetPlantHealthAdd(low_nutr);SetPhoneScreenAdd(scr_low_nutr)) +
+        ((new_ind = l4 -> SetPlantHealthAdd(low_nutr);SetPhoneScreenAdd(scr_low_nutr)) +
         (new_ind = l3 -> SetPhoneScreenNext; SetPlantHealthNext) +
         (new_ind = l2 -> SetPhoneScreenNext; SetPlantHealthNext) +
-        (new_ind = l1 -> SetPhoneScreenNext; SetPlantHealthNext)).
+        (new_ind = l1 -> SetPhoneScreenNext; SetPlantHealthNext))).
 
     SetLedLight(new_light : Colors) = 
         (ask(new_light)) +
@@ -220,14 +212,6 @@ proc Init =
         (get(red)+get(green)+get(blue));
         att(light, led, ppScene, new_light);
         tell(new_light)).
-
-    SetPhoneScreenReplace(new_screen : ScreenState) =
-        (ask(new_screen)) +
-        (nask(new_screen);
-        (get(scr_ok)+get(scr_low_water)+get(scr_low_nutr)+
-        get(scr_hot)+get(scr_cold)+get(scr_vent_on));
-        att(screen, phone, ppScene, new_screen);
-        tell(new_screen)).
 
     SetPhoneScreenAdd(new_screen : ScreenState) =
         (ask(new_screen)) +
@@ -237,12 +221,12 @@ proc Init =
         tell(new_screen)).
 
     SetPhoneScreenNext = 
-        (ask(scr_low_water);att(screen, phone, ppScene, scr_low_water)) +
+        ((ask(scr_low_water);att(screen, phone, ppScene, scr_low_water)) +
         (ask(scr_low_nutr);att(screen, phone, ppScene, scr_low_nutr)) +
         (ask(scr_hot);att(screen, phone, ppScene, scr_hot)) +
         (ask(scr_cold);att(screen, phone, ppScene, scr_cold)) +
         (ask(scr_vent_on);att(screen, phone, ppScene, scr_vent_on)) +
-        (nask(scr_low_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on);tell(scr_ok); att(screen, phone, ppScene, scr_ok)).
+        (nask(scr_low_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on); tell(scr_ok); att(screen, phone, ppScene, scr_ok))).
 
     SetFanState(new_state : FanState) =
         (ask(new_state)) +
@@ -250,8 +234,8 @@ proc Init =
         (get(fan_off) + get(fan_on));
         att(state, fan, ppScene, new_state);
         tell(new_state);
-        (new_state = fan_on -> SetPhoneScreenAdd(scr_vent_on)) +
-        (get(scr_vent_on);SetPhoneScreenNext)).
+        ((new_state = fan_on -> SetPhoneScreenAdd(scr_vent_on)) +
+        (new_state = fan_off -> get(scr_vent_on);SetPhoneScreenNext))).
 
     SetTemperature(new_temp : Temperature) =
         (ask(new_temp)) +
