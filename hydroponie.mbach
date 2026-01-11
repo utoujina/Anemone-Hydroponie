@@ -2,10 +2,10 @@ eset LevelsNutriments = {l1,l2,l3,l4}.
      LevelWarterJar  = {water_empty, water_low, water_medium, water_full}.
      Luminosity       = {low_light, medium_light, high_light}.
      Temperature      = {cold, normal, hot}.
-     HealthPlant       = {healthy,low_water,low_nutr,cold_stressed,hot_stressed}.
+     HealthPlant       = {healthy,empty_water,low_nutr,cold_stressed,hot_stressed}.
      NutrimeChief     = {active, inactive}.
      Colors           = {red,green,blue}.
-     ScreenState      = {scr_ok, scr_low_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
+     ScreenState      = {scr_ok, scr_empty_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
      FanState         ={fan_off,fan_on}.
      UIPos = { jar_pos, plant_pos, phone_pos, fan_pos, pump_pos, led_pos, nutr_ind_pos }.
      Manstate = { seatdown,standup,standup_with_water,standup_with_nutriments,back_to_seat}.
@@ -56,7 +56,7 @@ scene ppScene = {
     man_state5_img = loadImage(Images/man_state5.png).
         
     plant_healthy_img     = loadImage(Images/plant_healthy.jpg).
-    plant_low_water_img   = loadImage(Images/plant_low_water.png).
+    plant_empty_water_img   = loadImage(Images/plant_low_water.png).
     plant_hot_stress_img  = loadImage(Images/plant_hot_stress.jpg).
     plant_cold_stress_img = loadImage(Images/plant_cold_stress.jpg).
     plant_low_nutr_img    = loadImage(Images/plant_low_nutr.jpg).
@@ -72,7 +72,7 @@ scene ppScene = {
     led_red_img   = loadImage(Images/led_red.png).
 
     phone_ok_img        = loadImage(Images/phone_ok.png).
-    phone_low_water_img = loadImage(Images/phone_low_water.png).
+    phone_empty_water_img = loadImage(Images/phone_low_water.png).
     phone_low_nutr_img  = loadImage(Images/phone_low_nutr.png).
     phone_hot_img       = loadImage(Images/phone_hot.png).
     phone_cold_img      = loadImage(Images/phone_cold.png).
@@ -98,7 +98,7 @@ scene ppScene = {
 
     widget plant = {attributes = {health in HealthPlant.} display = {
         health = healthy -> plant_healthy_img.
-        health = low_water -> plant_low_water_img.
+        health = empty_water -> plant_empty_water_img.
         health = low_nutr -> plant_low_nutr_img.
         health = cold_stressed -> plant_cold_stress_img.
         health = hot_stressed -> plant_hot_stress_img.
@@ -139,7 +139,7 @@ scene ppScene = {
 
     widget phone = {attributes = {screen in ScreenState.} display = {
         screen = scr_ok -> phone_ok_img.
-        screen = scr_low_water -> phone_low_water_img.
+        screen = scr_empty_water -> phone_empty_water_img.
         screen = scr_low_nutr -> phone_low_nutr_img.
         screen = scr_hot -> phone_hot_img.
         screen = scr_cold -> phone_cold_img.
@@ -225,11 +225,11 @@ proc Init =
         tell(new_health)).
 
     SetPlantHealthNext =
-        ((ask(low_water);att(health, plant, ppScene, low_water)) +
+        ((ask(empty_water);att(health, plant, ppScene, empty_water)) +
         (ask(low_nutr);att(health, plant, ppScene, low_nutr)) +
         (ask(cold_stressed);att(health, plant, ppScene, cold_stressed)) +
         (ask(hot_stressed);att(health, plant, ppScene, hot_stressed)) +
-        (nask(low_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);((ask(healthy)) + (nask(healthy);tell(healthy)));
+        (nask(empty_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);((ask(healthy)) + (nask(healthy);tell(healthy)));
         att(health, plant, ppScene, healthy))).
 
     SetJarLevel(new_level : LevelWarterJar) =
@@ -238,10 +238,10 @@ proc Init =
         (get(water_empty) + get(water_low) + get(water_medium) + get(water_full));
         att(level, jar, ppScene, new_level);
         tell(new_level);
-        ((new_level = water_low -> SetPlantHealthAdd(low_water); SetPhoneScreenAdd(scr_low_water)) +
-        (new_level = water_empty -> SetPlantHealthAdd(low_water); SetPhoneScreenAdd(scr_low_water)) +
-        (new_level = water_medium -> ((get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water)));SetPhoneScreenNext; SetPlantHealthNext) +
-        (new_level = water_full -> ((get(scr_low_water);get(low_water)) + (nask(scr_low_water); nask(low_water)));SetPhoneScreenNext; SetPlantHealthNext))).
+        ((new_level = water_empty -> SetPlantHealthAdd(empty_water); SetPhoneScreenAdd(scr_empty_water)) +
+        (new_level = water_low -> ((get(scr_empty_water);get(empty_water)) + (nask(scr_empty_water); nask(empty_water)));SetPhoneScreenNext; SetPlantHealthNext) +
+        (new_level = water_medium -> ((get(scr_empty_water);get(empty_water)) + (nask(scr_empty_water); nask(empty_water)));SetPhoneScreenNext; SetPlantHealthNext) +
+        (new_level = water_full -> ((get(scr_empty_water);get(empty_water)) + (nask(scr_empty_water); nask(empty_water)));SetPhoneScreenNext; SetPlantHealthNext))).
 
     SetIndNut(new_ind : LevelsNutriments) =
         (ask(new_ind)) +
@@ -270,12 +270,12 @@ proc Init =
         tell(new_screen)).
 
     SetPhoneScreenNext = 
-        ((ask(scr_low_water);att(screen, phone, ppScene, scr_low_water)) +
+        ((ask(scr_empty_water);att(screen, phone, ppScene, scr_empty_water)) +
         (ask(scr_low_nutr);att(screen, phone, ppScene, scr_low_nutr)) +
         (ask(scr_hot);att(screen, phone, ppScene, scr_hot)) +
         (ask(scr_cold);att(screen, phone, ppScene, scr_cold)) +
         (ask(scr_vent_on);att(screen, phone, ppScene, scr_vent_on)) +
-        (nask(scr_low_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on);((ask(scr_ok)) + (nask(scr_ok);tell(scr_ok)));
+        (nask(scr_empty_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on);((ask(scr_ok)) + (nask(scr_ok);tell(scr_ok)));
         att(screen, phone, ppScene, scr_ok))).
 
     SetFanState(new_state : FanState) =
@@ -301,11 +301,6 @@ proc Init =
         (seconds = 0 -> tell(end);get(end)) +
         (seconds >= 1 -> Delay(pred(seconds))).
 
-    RandomModifications = 
-        (SetJarLevel(water_full) + SetJarLevel(water_medium) + SetJarLevel(water_low) + SetJarLevel(water_empty) +
-        SetIndNut(l1) + SetIndNut(l2) + SetIndNut(l3) + SetIndNut(l4) +
-        SetTemperature(normal) + SetTemperature(cold) + SetTemperature(hot)).
-
     LowerWater = 
         (ask(water_full); SetJarLevel(water_medium)) +
         (ask(water_medium); SetJarLevel(water_low)) +
@@ -318,16 +313,16 @@ proc Init =
         (ask(l2); SetIndNut(l3)) +
         (ask(l3); SetIndNut(l4)) +
         (ask(l4); MoveMan(standup); MoveMan(standup_with_nutriments); SetIndNut(l1);
-        ((ask(low_water); MoveMan(standup_with_water); SetJarLevel(water_full); MoveMan(back_to_seat)) + (nask(low_water); MoveMan(back_to_seat)))).
+        ((ask(empty_water); MoveMan(standup_with_water); SetJarLevel(water_full); MoveMan(back_to_seat)) + (nask(empty_water); MoveMan(back_to_seat)))).
 
     RoutineWater(secondsWater : Number) =
         Delay(secondsWater); LowerWater; RoutineWater(secondsWater).
 
-    RoutineWater(secondsNut : Number) =
-        Delay(secondsNut); LowerNut; RoutineWater(secondsNut).
+    RoutineNut(secondsNut : Number) =
+        Delay(secondsNut); LowerNut; RoutineNut(secondsNut).
 
-    Routine = 
-        Delay(10); LowerWater; LowerNut; Routine.
+    Routine(seconds : Number) = 
+        Delay(seconds); LowerWater; LowerNut; Routine.
     
     MoveMan(new_state:Manstate) =
         (new_state = seatdown -> att(state, man, ppScene, new_state);tell(seatdown))
