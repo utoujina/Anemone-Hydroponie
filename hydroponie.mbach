@@ -280,5 +280,11 @@ proc Init =
         (ask(l3); SetIndNut(l4)) +
         (ask(l4); SetIndNut(l1)).
 
+    RoutineWater(secondsWater : Number)
+        Delay(secondsWater); LowerWater; RoutineWater(secondsWater).
+
+    RoutineWater(secondsNut : Number)
+        Delay(secondsNut); LowerNut; RoutineWater(secondsNut).
+
     Routine(secondsWater : Number, secondsNut : Number) = 
         Delay(secondsWater); LowerWater || Delay(secondsNut); LowerNut; Routine.
