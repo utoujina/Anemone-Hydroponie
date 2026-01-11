@@ -8,8 +8,15 @@ eset LevelsNutriments = {l1,l2,l3,l4}.
      ScreenState      = {scr_ok, scr_low_water, scr_low_nutr ,scr_hot,scr_cold,scr_vent_on}.
      FanState         ={fan_off,fan_on}.
      UIPos = { jar_pos, plant_pos, phone_pos, fan_pos, pump_pos, led_pos, nutr_ind_pos }.
+     Number = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}.
 
 eqn
+    pred(20) = 19. pred(19) = 18. pred(18) = 17. pred(17) = 16.
+    pred(16) = 15. pred(15) = 14. pred(14) = 13. pred(13) = 12.
+    pred(12) = 11. pred(11) = 10. pred(10) = 9. pred(9) = 8.
+    pred(8) = 7. pred(7) = 6. pred(6) = 5. pred(5) = 4.
+    pred(4) = 3. pred(3) = 2. pred(2) = 1. pred(1) = 0.
+    
     xPos(jar_pos)      = 620.   yPos(jar_pos)      = 557.
     xPos(plant_pos)    = 820.   yPos(plant_pos)    = 420.
     xPos(phone_pos)    = 20.   yPos(phone_pos)    = 520.
@@ -181,7 +188,8 @@ proc Init =
         (ask(low_nutr);att(health, plant, ppScene, low_nutr)) +
         (ask(cold_stressed);att(health, plant, ppScene, cold_stressed)) +
         (ask(hot_stressed);att(health, plant, ppScene, hot_stressed)) +
-        (nask(low_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);tell(healthy);att(health, plant, ppScene, healthy))).
+        (nask(low_water);nask(low_nutr);nask(cold_stressed);nask(hot_stressed);(ask(healthy)) + (nask(healthy);tell(healthy));
+        att(health, plant, ppScene, healthy))).
 
     SetJarLevel(new_level : LevelWarterJar) =
         (ask(new_level)) +
@@ -198,7 +206,7 @@ proc Init =
         (ask(new_ind)) +
         (nask(new_ind);
         (get(l1)+ get(l2)+ get(l3) +
-        (get(l4); get(scr_low_nutr); get(low_nutr) ));
+        (get(l4); get(scr_low_nutr); get(low_nutr)) );
         att(ind, ind_low_nutr, ppScene, new_ind);
         tell(new_ind);
         ((new_ind = l4 -> SetPlantHealthAdd(low_nutr);SetPhoneScreenAdd(scr_low_nutr)) +
@@ -226,7 +234,8 @@ proc Init =
         (ask(scr_hot);att(screen, phone, ppScene, scr_hot)) +
         (ask(scr_cold);att(screen, phone, ppScene, scr_cold)) +
         (ask(scr_vent_on);att(screen, phone, ppScene, scr_vent_on)) +
-        (nask(scr_low_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on); tell(scr_ok); att(screen, phone, ppScene, scr_ok))).
+        (nask(scr_low_water);nask(scr_low_nutr);nask(scr_hot);nask(scr_cold);nask(scr_vent_on);(ask(scr_ok)) + (nask(scr_ok);tell(scr_ok));
+        att(screen, phone, ppScene, scr_ok))).
 
     SetFanState(new_state : FanState) =
         (ask(new_state)) +
@@ -243,11 +252,33 @@ proc Init =
         ((get(cold);get(cold_stressed);get(scr_cold)) + (get(hot);get(hot_stressed);get(scr_hot)) + get(normal));
         tell(new_temp);
         ((new_temp = cold -> SetPlantHealthAdd(cold_stressed); SetPhoneScreenAdd(scr_cold); SetLedLight(blue)) +
-        (new_temp = hot -> SetPlantHealthAdd(hot_stressed); SetPhoneScreenAdd(scr_hot); SetLedLight(red)) +
+        (new_temp = hot -> SetPlantHealthAdd(hot_stressed); SetPhoneScreenAdd(scr_hot); SetLedLight(red); Delay(5);
+        SetFanState(fan_on); Delay(10); SetFanState(fan_off); SetTemperature(normal)) +
         (new_temp = normal -> SetLedLight(green); SetPhoneScreenNext; SetPlantHealthNext))).
 
+    Delay(seconds : Number) =
+        (seconds = 0 -> tell(end);get(end)) +
+        (seconds >= 1 -> Delay(pred(seconds))).
+
+    Test = 
+        tell(oui);Delay(5);get(oui);tell(non).
 
     RandomModifications = 
         (SetJarLevel(water_full) + SetJarLevel(water_medium) + SetJarLevel(water_low) + SetJarLevel(water_empty) +
         SetIndNut(l1) + SetIndNut(l2) + SetIndNut(l3) + SetIndNut(l4) +
         SetTemperature(normal) + SetTemperature(cold) + SetTemperature(hot)).
+
+    LowerWater = 
+        (ask(water_full); SetJarLevel(water_medium)) +
+        (ask(water_medium); SetJarLevel(water_low)) +
+        (ask(water_low); SetJarLevel(water_empty)) +
+        (ask(water_empty);  SetJarLevel(water_full)).
+
+    LowerNut =
+        (ask(l1); SetIndNut(l2)) +
+        (ask(l2); SetIndNut(l3)) +
+        (ask(l3); SetIndNut(l4)) +
+        (ask(l4); SetIndNut(l1)).
+
+    Routine(secondsWater : Number, secondsNut : Number) = 
+        Delay(secondsWater); LowerWater || Delay(secondsNut); LowerNut; Routine.
